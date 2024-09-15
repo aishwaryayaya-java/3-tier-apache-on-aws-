@@ -1,0 +1,82 @@
+                                                   3 -Tier Applicaton Deployment
+sudo apt update
+sudo apt install apache2 -y
+sudo systemctl enable apache2
+sudo systemctl start apache2
+sudo nano /etc/apache2/sites-available/000-default.conf
+ServerAdmin webmaster@localhost
+ DocumentRoot /home/ubuntu/NodeJs-API
+ProxyPreserveHost On
+ProxyPass / http://localhost:3000/
+ProxyPassReverse / http://localhost:3000/sudo a2enmod proxy
+sudo a2enmod proxy_http
+sudo systemctl restart apache2
+sudo apt update
+sudo apt install nodejs npm -y
+git clone https://github.com/BL-AniketChile/NodeJs-API.git
+cd NodeJs-API
+nano .env
+MONGODB_URL=mongodb://localhost:27017/demo
+PORT=3000
+npm install
+npm start
+wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
+echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
+sudo apt-get update
+sudo apt-get install -y mongodb-org
+sudo systemctl start mongod
+sudo systemctl enable mongod 
+sudo systemctl status mongod
+sudo cp -r  NodeJs-API /var/www/
+cd  /var/www/
+ubuntu@ip-172-31-44-218:/var/www$ ls
+NodeJs-API  html
+ubuntu@ip-172-31-44-218:/var/www$ cd
+ubuntu@ip-172-31-44-218:~$ cd NodeJs-API
+ubuntu@ip-172-31-44-218:~/NodeJs-API$ ls
+app  config  env  node_modules  package-lock.json  package.json  server.js
+/NodeJs-API$ npm start
+wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
+echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
+sudo apt-get update
+sudo apt-get install -y mongodb-org
+sudo systemctl start mongod
+sudo systemctl enable mongod 
+sudo systemctl status mongod
+
+
+
+
+#after this go in NodeJs-API and run command npm start
+#to start as daemon thread use systemd
+sudo nano /etc/systemd/system/myapp.service
+[Unit]
+Description=My Node.js Application
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/npm start
+WorkingDirectory=/var/www/NodeJs-API
+Restart=always
+User=root
+Group=root
+Environment=PATH=/usr/bin:/usr/local/bin
+Environment=NODE_ENV=production
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=myapp
+
+[Install]
+WantedBy=multi-user.target
+sudo systemctl daemon-reload
+sudo systemctl start myapp
+sudo systemctl enable myapp
+sudo systemctl status myapp {to check status}
+sudo systemctl stop myapp { to stop}
+sudo systemctl enable myapp{to ensure service starts on boot}
+sudo systemctl restart myapp{to re start}
+sudo journalctl -u myapp { to check logs} 
+
+
+
+
